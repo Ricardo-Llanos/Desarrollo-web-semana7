@@ -1,122 +1,119 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useContext, useCallback } from 'react';
+import { ThemeProvider, ThemeContext } from './context/ThemeContext';
+import { AuthProvider, AuthContext } from './context/AuthContext';
+import { useFetch } from './hooks/useFetch';
+import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
+import { CourseList } from './components/CourseList';
+import { Profile } from './components/Profile';
 
-function App() {
-  const [count, setCount] = useState(0)
+const MainApp = () => { 
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const isDark = theme === 'dark';
+  const { user } = useContext(AuthContext);
+  
+  // Enrutador de estado simple: 'courses' o 'profile'
+  const [view, setView] = useState('courses');
+  const [sidebarTab, setSidebarTab] = useState('todos'); // 'novedades', 'todos', 'mis-cursos'
+  const [searchTerm, setSearchTerm] = useState('');
 
+  // Consumo de la API con los datos de cursos/tareas
+  const { data: apiCourses, loading } = useFetch('https://jsonplaceholder.typicode.com/todos');
+
+  const [currentPage, setCurrentPage] = useState(1); // Estado para controlar la página actual
+  const [favorites, setFavorites] = useState([]); // Estado para "Mis Cursos"
+
+  const toggleFavorite = useCallback((courseId) => {
+    setFavorites(prev => 
+      prev.includes(courseId) ? prev.filter(id => id !== courseId) : [...prev, courseId]
+    );
+    // Reiniciamos la página a 1 si se quita un curso tildado estando en la pestaña "Mis Cursos"
+    setCurrentPage(1);
+  }, []);
+
+  // Manejador del cambio de pestañas en el Sidebar
+  const handleTabChange = (tabId) => {
+    setSidebarTab(tabId);
+    setCurrentPage(1); // Resetea el paginado al cambiar de vista para evitar desbordamientos
+    setView('courses');
+  };
+
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Resetea el paginado al escribir letra por letra
+  };
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      {/* Barra de Navegación Superior */}
+      <Navbar setView={setView} searchTerm={searchTerm} setSearchTerm={handleSearchChange} />
 
-      <div className="ticks"></div>
+      {/* Contenedor Split Layout */}
+      <div style={{ display: 'flex' }}>
+        {/* Barra Lateral */}
+        <Sidebar currentTab={sidebarTab} setCurrentTab={handleTabChange} setView={setView} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Panel de visualización principal */}
+        <main style={{ flexGrow: 1, padding: '40px', backgroundColor: '#f9fafb' }}>
+          {view === 'profile' ? (
+            <Profile setView={setView} />
+          ) : (
+            <>
+              {loading ? (
+                <p style={{ color: '#2563eb', fontWeight: '600' }}>Sincronizando catálogo desde la API...</p>
+              ) : (
+                <CourseList 
+                  courses={apiCourses} 
+                  searchTerm={searchTerm} 
+                  tabActive={sidebarTab} 
+                  favorites={favorites}
+                  toggleFavorite={toggleFavorite}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                />
+              )}
+            </>
+          )}
+        </main>
+      </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {/* Cambio de tema  */}
+      <button
+        onClick={toggleTheme}
+        style={{
+          position: 'fixed',
+          bottom: '25px',
+          right: '25px',
+          padding: '12px 20px',
+          borderRadius: '30px',
+          border: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`,
+          backgroundColor: isDark ? '#1e293b' : '#ffffff',
+          color: isDark ? '#fbbf24' : '#1e293b',
+          fontSize: '0.9rem',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          zIndex: 1000,
+          transition: 'transform 0.2s ease, background-color 0.3s ease'
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        title="Alternar Modo de Color Completo"
+      >
+        <span>{isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>
+      </button>
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <ThemeProvider>
+        <MainApp />
+      </ThemeProvider>
+    </AuthProvider>
+  );
 }
-
-export default App
