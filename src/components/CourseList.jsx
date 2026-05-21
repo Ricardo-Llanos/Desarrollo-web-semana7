@@ -1,31 +1,20 @@
-import React, { useState, useMemo, useCallback, useRef, useContext} from 'react';
-import { ThemeContext } from '../context/ThemeContext';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Pagination } from './Pagination';
 
-export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFavorite, currentPage, setCurrentPage }) => {
-  const { theme } = useContext(ThemeContext);
-  const isDark = theme === 'dark';
-
+export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFavorite, currentPage, setCurrentPage, setView, setSelectedCourse }) => {
   const ITEMS_PER_PAGE = 15;
 
-  // IA: Redundancia de renderizado por filtros múltiples -> Solución manual: useMemo unificado para tab + búsqueda
   const processedCourses = useMemo(() => {
     let result = [...courses];
-    
-    // 1. Filtrar por Tab de la Barra Lateral
+
     if (tabActive === 'novedades') {
       result = result.filter(c => !favorites.includes(c.id) && c.id % 2 === 0);
-
     } else if (tabActive === 'mis-cursos') {
       result = result.filter(c => favorites.includes(c.id));
-
-    }else if (tabActive === 'todos') {
-      result = [...courses];
     }
 
-    // 2. Filtrar por término de búsqueda del Navbar
     if (searchTerm) {
-      result = result.filter(c => c.title.toLowerCase().trim().startsWith(searchTerm.toLowerCase().trim()));
+      result = result.filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()));
     }
 
     return result;
@@ -35,92 +24,100 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return processedCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [processedCourses, currentPage]);
+
+  const gradients = [
+    'linear-gradient(135deg, #fecdd3, #fda4af)',
+    'linear-gradient(135deg, #ccfbf1, #99f6e4)',
+    'linear-gradient(135deg, #dbeafe, #bfdbfe)',
+    'linear-gradient(135deg, #ffedd5, #fed7aa)',
+  ];
+
   return (
     <div style={{ padding: '10px 0' }}>
-      <h2 style={{ fontSize: '1.6rem', color: isDark ? '#f8fafc' : '#111827', margin: '0 0 20px 0', textTransform: 'capitalize' }}>
-        {tabActive === 'todos' ? 'Todos los Cursos' : tabActive === 'mis-cursos' ? 'Mis Cursos (Favoritos ❤️)' : 'Novedades'} 
+      <h2 style={{ fontSize: '1.6rem', color: '#111827', margin: '0 0 20px 0' }}>
+        {tabActive === 'todos' ? 'Todos los Cursos' : tabActive === 'mis-cursos' ? 'Mis Cursos ❤️' : 'Novedades'}
         <span style={{ fontSize: '1rem', color: '#6b7280', marginLeft: '10px' }}>({processedCourses.length} encontrados)</span>
       </h2>
-      
+
       {paginatedCourses.length === 0 ? (
         <p style={{ color: '#6b7280', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-          No se encontraron cursos que coincidan exactamente desde el inicio con el término buscado.
+          No se encontraron cursos.
         </p>
       ) : (
         <>
-          {/* DISEÑO EN MOSAICO */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '24px'
-          }}>
-            {paginatedCourses.map((course, idx) => {
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+            {paginatedCourses.map((course) => {
               const isFav = favorites.includes(course.id);
-              const gradientBg = [
-                'linear-gradient(135deg, #fecdd3, #fda4af)',
-                'linear-gradient(135deg, #ccfbf1, #99f6e4)',
-                'linear-gradient(135deg, #dbeafe, #bfdbfe)',
-                'linear-gradient(135deg, #ffedd5, #fed7aa)'
-              ][course.id % 4];
 
               return (
-                <div key={course.id} style={{
-                  backgroundColor: isDark ? '#1e293b' : '#ffffff',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.02)',
-                  border: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  position: 'relative' // Para posicionar el corazón encima
-                }}>
-                  
-                  {/* REQUERIMIENTO: Corazón encima de la tarjeta */}
+                <div
+                  key={course.id}
+                  onClick={() => {
+                    setSelectedCourse(course);
+                    setView('intro');
+                  }}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                    border: '1px solid #f3f4f6',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
+                  }}
+                >
+                  {/* Corazón */}
                   <button
-                    onClick={() => toggleFavorite(course.id)}
+                    onClick={e => { e.stopPropagation(); toggleFavorite(course.id); }}
                     style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      backgroundColor:isDark ? '#334155' : '#ffffff',
-                      border: 'none',
-                      borderRadius: '50%',
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      fontSize: '1.2rem',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                      zIndex: 10,
-                      transition: 'transform 0.1s ease'
+                      position: 'absolute', top: '12px', right: '12px',
+                      backgroundColor: '#ffffff', border: 'none', borderRadius: '50%',
+                      width: '32px', height: '32px', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', fontSize: '1.1rem',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)', zIndex: 10,
                     }}
-                    title={isFav ? "Quitar de mis cursos" : "Agregar a mis cursos"}
                   >
                     {isFav ? '❤️' : '🤍'}
                   </button>
 
-                  {/* Imagen Estilizada */}
-                  <div style={{ height: '110px', background: gradientBg, width: '100%' }}></div>
-                  
-                  {/* Detalles del Curso */}
-                  <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.75rem', color: isDark ? '#f1f5f9' : '#111827', fontWeight: 'bold', marginBottom: '4px' }}>
-                      ID: #{course.id}
+                  {/* Banner de color */}
+                  <div style={{ height: '110px', background: gradients[course.id % 4], position: 'relative' }}>
+                    <span style={{
+                      position: 'absolute', bottom: '10px', left: '14px',
+                      backgroundColor: 'rgba(255,255,255,0.85)', borderRadius: '20px',
+                      padding: '3px 10px', fontSize: '0.72rem', fontWeight: '700', color: '#374151'
+                    }}>
+                      {course.category}
                     </span>
-                    <h3 style={{ fontSize: '1rem', margin: '0 0 12px 0', color: isDark ? '#94a3b8' : '#6b7280', textTransform: 'capitalize', fontWeight: '600', lineHeight: '1.4' }}>
-                      {course.title.split(' ').slice(0, 3).join(' ')} 7th Grade
-                    </h3>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', color: isDark ? '#94a3b8' : '#6b7280', marginBottom: '15px' }}>
-                      <span>📖 32 Lecciones</span>
-                      <span>📊 4 Quizzes</span>
-                    </div>
+                  </div>
 
+                  {/* Info */}
+                  <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <h3 style={{ fontSize: '0.98rem', margin: '0 0 10px 0', color: '#111827', fontWeight: '700', lineHeight: '1.4' }}>
+                      {course.title}
+                    </h3>
+                    <p style={{ fontSize: '0.82rem', color: '#6b7280', margin: '0 0 14px 0', lineHeight: '1.5' }}>
+                      {course.description.slice(0, 80)}...
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px', fontSize: '0.82rem', color: '#6b7280', marginBottom: '14px' }}>
+                      <span>📖 {course.lessonsCount} lecciones</span>
+                      <span>📝 {course.quizzesCount} quizzes</span>
+                    </div>
                     <div style={{ marginTop: 'auto' }}>
-                      <div style={{ height: '6px', width: '100%', backgroundColor: isDark ? '#334155' : '#e5e7eb', borderRadius: '3px' }}>
-                        <div style={{ height: '100%', width: isFav ? '100%' : '20%', backgroundColor: '#2563eb', borderRadius: '3px' }}></div>
+                      <div style={{ height: '5px', backgroundColor: '#e5e7eb', borderRadius: '3px' }}>
+                        <div style={{ height: '100%', width: isFav ? '100%' : '15%', backgroundColor: '#2563eb', borderRadius: '3px', transition: 'width 0.3s' }} />
                       </div>
                     </div>
                   </div>
@@ -129,7 +126,6 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
             })}
           </div>
 
-          {/* Renderizado de la Paginación Reutilizable */}
           <Pagination
             totalItems={processedCourses.length}
             itemsPerPage={ITEMS_PER_PAGE}

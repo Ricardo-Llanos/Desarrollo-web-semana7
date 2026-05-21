@@ -1,11 +1,12 @@
 import React, { useState, useContext, useCallback } from 'react';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import { useFetch } from './hooks/useFetch';
+import coursesData from './data/CoursesData.json';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { CourseList } from './components/CourseList';
 import { Profile } from './components/Profile';
+import { Introduction } from './components/Introduction';
 
 const MainApp = () => { 
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -18,7 +19,9 @@ const MainApp = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Consumo de la API con los datos de cursos/tareas
-  const { data: apiCourses, loading } = useFetch('https://jsonplaceholder.typicode.com/todos');
+  const apiCourses = coursesData;
+  const loading = false;
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1); // Estado para controlar la página actual
   const [favorites, setFavorites] = useState([]); // Estado para "Mis Cursos"
@@ -55,24 +58,28 @@ const MainApp = () => {
         {/* Panel de visualización principal */}
         <main style={{ flexGrow: 1, padding: '40px', backgroundColor: '#f9fafb' }}>
           {view === 'profile' ? (
-            <Profile setView={setView} />
-          ) : (
-            <>
-              {loading ? (
-                <p style={{ color: '#2563eb', fontWeight: '600' }}>Sincronizando catálogo desde la API...</p>
-              ) : (
-                <CourseList 
-                  courses={apiCourses} 
-                  searchTerm={searchTerm} 
-                  tabActive={sidebarTab} 
-                  favorites={favorites}
-                  toggleFavorite={toggleFavorite}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                />
-              )}
-            </>
-          )}
+          <Profile setView={setView} />
+        ) : view === 'intro' ? (
+          <Introduction course={selectedCourse} setView={setView} />
+        ) : (
+          <>
+            {loading ? (
+              <p>Cargando...</p>
+            ) : (
+              <CourseList
+                courses={apiCourses}
+                searchTerm={searchTerm}
+                tabActive={sidebarTab}
+                favorites={favorites}
+                toggleFavorite={toggleFavorite}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                setView={setView}
+                setSelectedCourse={setSelectedCourse}
+              />
+            )}
+          </>
+        )}
         </main>
       </div>
 
