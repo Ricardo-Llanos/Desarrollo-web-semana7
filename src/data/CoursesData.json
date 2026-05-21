@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "title": "React y Arquitectura Front-End",
+    "lessonsCount": 32,
+    "quizzesCount": 4,
+    "durationHours": 15,
+    "category": "Frontend",
+    "description": "Domina el ciclo de renderizado de React mediante el uso estratégico de Hooks nativos y optimización de memoria.",
+    "sections": [
+      { "id": 101, "title": "Introducción al Entorno y Configuración", "duration": "12 min", "completed": true },
+      { "id": 102, "title": "El Ciclo de Vida en React y Re-renders", "duration": "25 min", "completed": true },
+      { "id": 103, "title": "Control de Efectos Secundarios (useEffect)", "duration": "18 min", "completed": false },
+      { "id": 104, "title": "Optimización de Memoria con useMemo y useCallback", "duration": "30 min", "completed": false },
+      { "id": 105, "title": "Creación de Hooks Personalizados Avanzados", "duration": "22 min", "completed": false }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Node.js, Express y Microservicios",
+    "lessonsCount": 28,
+    "quizzesCount": 3,
+    "durationHours": 18,
+    "category": "Backend",
+    "description": "Construye APIs RESTful escalables y maneja la arquitectura de microservicios asíncronos con bases de datos NoSQL.",
+    "sections": [
+      { "id": 201, "title": "Configuración del Servidor HTTP con Express", "duration": "15 min", "completed": false },
+      { "id": 202, "title": "Diseño de Middlewares y Seguridad Básica", "duration": "20 min", "completed": false },
+      { "id": 203, "title": "Conexión a Base de Datos y Modelado", "duration": "35 min", "completed": false }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "TypeScript Completo desde Cero",
+    "lessonsCount": 20,
+    "quizzesCount": 2,
+    "durationHours": 10,
+    "category": "Lenguajes",
+    "description": "Añade tipado estático fuerte a tus aplicaciones de JavaScript para prevenir errores en tiempo de diseño.",
+    "sections": [
+      { "id": 301, "title": "Tipos Primitivos e Inferencias de Datos", "duration": "10 min", "completed": false },
+      { "id": 302, "title": "Interfaces, Types y Clases Avanzadas", "duration": "25 min", "completed": false },
+      { "id": 303, "title": "Genéricos y Decoradores en Producción", "duration": "30 min", "completed": false }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Estrategias Avanzadas de CSS y Tailwind",
+    "lessonsCount": 24,
+    "quizzesCount": 3,
+    "durationHours": 8,
+    "category": "Frontend",
+    "description": "Aprende a maquetar layouts profesionales y responsivos aplicando utilidades avanzadas y grillas estilo Scholarly.",
+    "sections": [
+      { "id": 401, "title": "Flexbox vs CSS Grid: Cuándo usar cada uno", "duration": "18 min", "completed": false },
+      { "id": 402, "title": "Configuración del archivo tailwind.config.js", "duration": "14 min", "completed": false },
+      { "id": 403, "title": "Optimización de Estilos para el Modo Oscuro", "duration": "22 min", "completed": false }
+    ]
+  }
+]
