@@ -1,7 +1,11 @@
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useContext} from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 import { Pagination } from './Pagination';
 
 export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFavorite, currentPage, setCurrentPage }) => {
+  const { theme } = useContext(ThemeContext);
+  const isDark = theme === 'dark';
+
   const ITEMS_PER_PAGE = 15;
 
   // IA: Redundancia de renderizado por filtros múltiples -> Solución manual: useMemo unificado para tab + búsqueda
@@ -33,7 +37,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
   }, [processedCourses, currentPage]);
   return (
     <div style={{ padding: '10px 0' }}>
-      <h2 style={{ fontSize: '1.6rem', color: '#111827', margin: '0 0 20px 0', textTransform: 'capitalize' }}>
+      <h2 style={{ fontSize: '1.6rem', color: isDark ? '#f8fafc' : '#111827', margin: '0 0 20px 0', textTransform: 'capitalize' }}>
         {tabActive === 'todos' ? 'Todos los Cursos' : tabActive === 'mis-cursos' ? 'Mis Cursos (Favoritos ❤️)' : 'Novedades'} 
         <span style={{ fontSize: '1rem', color: '#6b7280', marginLeft: '10px' }}>({processedCourses.length} encontrados)</span>
       </h2>
@@ -61,11 +65,11 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
 
               return (
                 <div key={course.id} style={{
-                  backgroundColor: '#ffffff',
+                  backgroundColor: isDark ? '#1e293b' : '#ffffff',
                   borderRadius: '16px',
                   overflow: 'hidden',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.02)',
-                  border: '1px solid #f3f4f6',
+                  boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.02)',
+                  border: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`,
                   display: 'flex',
                   flexDirection: 'column',
                   position: 'relative' // Para posicionar el corazón encima
@@ -78,7 +82,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                       position: 'absolute',
                       top: '12px',
                       right: '12px',
-                      backgroundColor: '#ffffff',
+                      backgroundColor:isDark ? '#334155' : '#ffffff',
                       border: 'none',
                       borderRadius: '50%',
                       width: '32px',
@@ -102,20 +106,20 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                   
                   {/* Detalles del Curso */}
                   <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 'bold', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '0.75rem', color: isDark ? '#f1f5f9' : '#111827', fontWeight: 'bold', marginBottom: '4px' }}>
                       ID: #{course.id}
                     </span>
-                    <h3 style={{ fontSize: '1rem', margin: '0 0 12px 0', color: '#111827', textTransform: 'capitalize', fontWeight: '600', lineHeight: '1.4' }}>
+                    <h3 style={{ fontSize: '1rem', margin: '0 0 12px 0', color: isDark ? '#94a3b8' : '#6b7280', textTransform: 'capitalize', fontWeight: '600', lineHeight: '1.4' }}>
                       {course.title.split(' ').slice(0, 3).join(' ')} 7th Grade
                     </h3>
                     
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', color: '#6b7280', marginBottom: '15px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', color: isDark ? '#94a3b8' : '#6b7280', marginBottom: '15px' }}>
                       <span>📖 32 Lecciones</span>
                       <span>📊 4 Quizzes</span>
                     </div>
 
                     <div style={{ marginTop: 'auto' }}>
-                      <div style={{ height: '6px', width: '100%', backgroundColor: '#e5e7eb', borderRadius: '3px' }}>
+                      <div style={{ height: '6px', width: '100%', backgroundColor: isDark ? '#334155' : '#e5e7eb', borderRadius: '3px' }}>
                         <div style={{ height: '100%', width: isFav ? '100%' : '20%', backgroundColor: '#2563eb', borderRadius: '3px' }}></div>
                       </div>
                     </div>

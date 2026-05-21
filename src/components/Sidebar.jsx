@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 
 export const Sidebar = ({ currentTab, setCurrentTab, setView }) => {
+  const { theme } = useContext(ThemeContext);
+  const isDark = theme === 'dark';
+
   const tabs = [
     { id: 'novedades', label: '✨ Novedades' },
     { id: 'todos', label: '📚 Todos los cursos' },
@@ -10,8 +14,8 @@ export const Sidebar = ({ currentTab, setCurrentTab, setView }) => {
   return (
     <aside style={{
       width: '260px',
-      backgroundColor: '#ffffff',
-      borderRight: '1px solid #f0f0f0',
+      backgroundColor: isDark ? '#1e293b' : '#ffffff',
+      borderRight: `1px solid ${isDark ? '#334155' : '#f0f0f0'}`,
       padding: '30px 20px',
       display: 'flex',
       flexDirection: 'column',
@@ -33,8 +37,8 @@ export const Sidebar = ({ currentTab, setCurrentTab, setView }) => {
               padding: '12px 16px',
               borderRadius: '8px',
               border: 'none',
-              backgroundColor: isActive ? '#f3f4f6' : 'transparent',
-              color: isActive ? '#2563eb' : '#4b5563',
+              backgroundColor: isActive ? (isDark ? '#334155' : '#f3f4f6') : 'transparent',
+              color: isActive ? '#3b82f6' : (isDark ? '#94a3b8' : '#4b5563'),
               fontWeight: isActive ? '600' : '500',
               fontSize: '0.95rem',
               cursor: 'pointer',

@@ -23,8 +23,8 @@ export const Navbar = ({ setView, searchTerm, setSearchTerm }) => {
     }}>
       {/* Logotipo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => setView('courses')}>
-        <div style={{ width: '24px', height: '24px', backgroundColor: '#3b82f6', borderRadius: '6px' }}></div>
-        <span style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#111827' }}>Scholarly</span>
+        <div style={{ width: '24px', height: '24px', backgroundColor: '#2563eb', borderRadius: '6px' }}></div>
+        <span style={{ fontWeight: 'bold', fontSize: '1.2rem', color: isDark ? '#f8fafc' : '#111827' }}>Scholarly</span>
       </div>
 
       {/* Buscador Dinámico */}
@@ -86,8 +86,8 @@ export const Navbar = ({ setView, searchTerm, setSearchTerm }) => {
               width: '35px',
               height: '35px',
               borderRadius: '50%',
-              backgroundColor: '#e0e7ff',
-              color: '#4f46e5',
+              backgroundColor: isDark ? '#3b82f6' : '#e0e7ff',
+              color: isDark ? '#ffffff' : '#4f46e5',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

@@ -43,7 +43,7 @@ const MainApp = () => {
     setCurrentPage(1); // Resetea el paginado al escribir letra por letra
   };
   return (
-    <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ backgroundColor: isDark ? '#0f172a' : '#f9fafb', color: isDark ? '#f8fafc' : '#000000', minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Barra de Navegación Superior */}
       <Navbar setView={setView} searchTerm={searchTerm} setSearchTerm={handleSearchChange} />
 
