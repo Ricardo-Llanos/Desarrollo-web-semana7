@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useCallback, useRef, useContext} from 'react';
+import React, { useState, useMemo, useCallback, useRef, useContext } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 import { Pagination } from './Pagination';
 
-export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFavorite, currentPage, setCurrentPage }) => {
+export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFavorite, currentPage, setCurrentPage, setSelectedCourse, setView }) => {
   const { theme } = useContext(ThemeContext);
   const isDark = theme === 'dark';
 
@@ -11,7 +11,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
   // IA: Redundancia de renderizado por filtros múltiples -> Solución manual: useMemo unificado para tab + búsqueda
   const processedCourses = useMemo(() => {
     let result = [...courses];
-    
+
     // 1. Filtrar por Tab de la Barra Lateral
     if (tabActive === 'novedades') {
       result = result.filter(c => !favorites.includes(c.id) && c.id % 2 === 0);
@@ -19,7 +19,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
     } else if (tabActive === 'mis-cursos') {
       result = result.filter(c => favorites.includes(c.id));
 
-    }else if (tabActive === 'todos') {
+    } else if (tabActive === 'todos') {
       result = [...courses];
     }
 
@@ -38,10 +38,10 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
   return (
     <div style={{ padding: '10px 0' }}>
       <h2 style={{ fontSize: '1.6rem', color: isDark ? '#f8fafc' : '#111827', margin: '0 0 20px 0', textTransform: 'capitalize' }}>
-        {tabActive === 'todos' ? 'Todos los Cursos' : tabActive === 'mis-cursos' ? 'Mis Cursos (Favoritos ❤️)' : 'Novedades'} 
+        {tabActive === 'todos' ? 'Todos los Cursos' : tabActive === 'mis-cursos' ? 'Mis Cursos (Favoritos ❤️)' : 'Novedades'}
         <span style={{ fontSize: '1rem', color: '#6b7280', marginLeft: '10px' }}>({processedCourses.length} encontrados)</span>
       </h2>
-      
+
       {paginatedCourses.length === 0 ? (
         <p style={{ color: '#6b7280', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
           No se encontraron cursos que coincidan exactamente desde el inicio con el término buscado.
@@ -56,6 +56,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
           }}>
             {paginatedCourses.map((course, idx) => {
               const isFav = favorites.includes(course.id);
+              const progress = course.progress || 0;
               const gradientBg = [
                 'linear-gradient(135deg, #fecdd3, #fda4af)',
                 'linear-gradient(135deg, #ccfbf1, #99f6e4)',
@@ -74,7 +75,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                   flexDirection: 'column',
                   position: 'relative' // Para posicionar el corazón encima
                 }}>
-                  
+
                   {/* REQUERIMIENTO: Corazón encima de la tarjeta */}
                   <button
                     onClick={() => toggleFavorite(course.id)}
@@ -82,7 +83,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                       position: 'absolute',
                       top: '12px',
                       right: '12px',
-                      backgroundColor:isDark ? '#334155' : '#ffffff',
+                      backgroundColor: isDark ? '#334155' : '#ffffff',
                       border: 'none',
                       borderRadius: '50%',
                       width: '32px',
@@ -101,41 +102,85 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                     {isFav ? '❤️' : '🤍'}
                   </button>
 
-                  {/* Imagen Estilizada */}
                   <div style={{ height: '110px', background: gradientBg, width: '100%' }}></div>
-                  
-                  {/* Detalles del Curso */}
-                  <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.75rem', color: isDark ? '#f1f5f9' : '#111827', fontWeight: 'bold', marginBottom: '4px' }}>
-                      ID: #{course.id}
-                    </span>
-                    <h3 style={{ fontSize: '1rem', margin: '0 0 12px 0', color: isDark ? '#94a3b8' : '#6b7280', textTransform: 'capitalize', fontWeight: '600', lineHeight: '1.4' }}>
-                      {course.title.split(' ').slice(0, 3).join(' ')} 7th Grade
-                    </h3>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', color: isDark ? '#94a3b8' : '#6b7280', marginBottom: '15px' }}>
-                      <span>📖 32 Lecciones</span>
-                      <span>📊 4 Quizzes</span>
-                    </div>
+              
+              <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 'bold', textTransform: 'uppercase' }}>{course.category}</span>
+                
+                <h3 style={{ fontSize: '1.1rem', margin: '6px 0 10px 0', color: isDark ? '#f1f5f9' : '#111827', fontWeight: '600' }}>
+                  {course.title}
+                </h3>
+                
+                <p style={{ fontSize: '0.88rem', color: isDark ? '#94a3b8' : '#6b7280', margin: '0 0 15px 0', lineHeight: '1.4', flexGrow: 1 }}>
+                  {course.description}
+                </p>
 
-                    <div style={{ marginTop: 'auto' }}>
-                      <div style={{ height: '6px', width: '100%', backgroundColor: isDark ? '#334155' : '#e5e7eb', borderRadius: '3px' }}>
-                        <div style={{ height: '100%', width: isFav ? '100%' : '20%', backgroundColor: '#2563eb', borderRadius: '3px' }}></div>
-                      </div>
+                {/* AREA INTERACTIVA DE PROGRESO (DISEÑO SPLIT: CRONOLOGÍA Y BARRA CIRCULAR) */}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  borderTop: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`, 
+                  paddingTop: '12px',
+                  marginBottom: '15px'
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.82rem', color: isDark ? '#94a3b8' : '#6b7280' }}>
+                    <span>📖 {course.lessonsCount} Clases</span>
+                    <span>📊 {course.quizzesCount} Tests</span>
+                  </div>
+
+                  {/* REQUERIMIENTO: BARRA DE PROGRESO CIRCULAR CON CSS CONIC-GRADIENT */}
+                  <div 
+                    style={{
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: '50%',
+                      // El degradado cónico rellena proporcionalmente el porcentaje en azul (#2563eb)
+                      background: `conic-gradient(#2563eb ${progress * 3.6}deg, ${isDark ? '#334155' : '#e5e7eb'} 0deg)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative'
+                    }}
+                    title={`Progreso: ${progress}%`}
+                  >
+                    {/* Círculo interno para crear el efecto de anillo (Donut Chart) */}
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.72rem',
+                      fontWeight: '700',
+                      color: isDark ? '#f1f5f9' : '#1f2937'
+                    }}>
+                      {progress}%
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
 
-          {/* Renderizado de la Paginación Reutilizable */}
-          <Pagination
-            totalItems={processedCourses.length}
-            itemsPerPage={ITEMS_PER_PAGE}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
+                <button 
+                  onClick={() => {
+                    setSelectedCourse(course); 
+                    setView('content');       
+                  }}
+                  style={{
+                    width: '100%', padding: '10px', backgroundColor: '#2563eb', color: '#fff',
+                    border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem'
+                  }}
+                >
+                  Ver Contenido 🚀
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <Pagination totalItems={processedCourses.length} currentPage={currentPage} onPageChange={setCurrentPage} />
         </>
       )}
     </div>
