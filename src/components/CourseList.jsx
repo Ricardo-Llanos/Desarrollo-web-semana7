@@ -110,11 +110,11 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                     <button 
                       onClick={() => {
                         setSelectedCourse(course); 
-                        setView('intro'); // Asegúrate que sea 'intro' para que coincida con tu App.jsx
+                        setView('intro');
                       }}
                       style={{ width: '100%', padding: '10px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' }}
                     >
-                      Ver Contenido 🚀
+                      Ver Contenido
                     </button>
                   </div>
                 </div>

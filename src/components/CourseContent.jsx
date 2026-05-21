@@ -61,7 +61,7 @@ export const CourseContent = ({ course, setView }) => {
             {/* Cabecera de Navegación del Visor */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <button
-                    onClick={() => setView('courses')}
+                    onClick={() => setView('intro')}
                     style={{
                         padding: '10px 16px',
                         borderRadius: '8px',
@@ -75,7 +75,7 @@ export const CourseContent = ({ course, setView }) => {
                         gap: '8px'
                     }}
                 >
-                    ⬅️ Regresar a todos los cursos
+                    ⬅️ Regresar a la Introducción
                 </button>
 
                 {/* REQUERIMIENTO: BARRA DE PROGRESO HORIZONTAL REPRESENTATIVA COMPLETA */}

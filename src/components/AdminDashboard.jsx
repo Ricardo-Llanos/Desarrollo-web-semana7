@@ -173,7 +173,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
                 <div>
                     <h1 style={{ margin: '0 0 5px 0', fontSize: '2rem', color: isDark ? '#f8fafc' : '#111827' }}>
-                        📊 Panel de Administrador
+                        Panel de Administrador
                     </h1>
                     <p style={{ margin: 0, color: isDark ? '#94a3b8' : '#6b7280', fontSize: '0.95rem' }}>
                         Gestiona todos los cursos disponibles en la plataforma
@@ -195,7 +195,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                         gap: '8px'
                     }}
                 >
-                    ➕ Nuevo Curso
+                    Nuevo Curso
                 </button>
             </div>
 
@@ -372,7 +372,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                                         fontWeight: '600'
                                                     }}
                                                 >
-                                                    ✏️ Editar
+                                                    Editar
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteCourse(course.id)}
@@ -387,7 +387,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                                         fontWeight: '600'
                                                     }}
                                                 >
-                                                    🗑️ Eliminar
+                                                    Eliminar
                                                 </button>
                                             </div>
                                         </td>
@@ -429,7 +429,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                             fontSize: '1.5rem',
                             color: isDark ? '#f8fafc' : '#111827'
                         }}>
-                            {editingId ? '✏️ Editar Curso' : '➕ Crear Nuevo Curso'}
+                            {editingId ? 'Editar Curso' : 'Crear Nuevo Curso'}
                         </h2>
 
                         <form onSubmit={handleSaveCourse}>

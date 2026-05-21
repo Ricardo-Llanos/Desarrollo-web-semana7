@@ -142,11 +142,8 @@ export const Introduction = ({ course, setView }) => {
           onMouseEnter={e => e.currentTarget.style.backgroundColor = '#1d4ed8'}
           onMouseLeave={e => e.currentTarget.style.backgroundColor = '#2563eb'}
         >
-          🚀 Ir al contenido del curso
+          Ir al contenido del curso
         </button>
-        <p style={{ color: sub, fontSize: '0.82rem', marginTop: '12px' }}>
-          Tu compañero preparó el contenido — ¡dale un vistazo!
-        </p>
       </div>
 
     </div>
