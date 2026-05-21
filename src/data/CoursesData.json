@@ -58,3 +58,216 @@
     ]
   }
 ]
+
+[
+  {
+    "id": 5,
+    "title": "Angular e Inyección de Dependencias",
+    "lessonsCount": 30,
+    "quizzesCount": 4,
+    "durationHours": 16,
+    "category": "Frontend",
+    "description": "Explora la arquitectura modular de Angular, RxJS para programación reactiva y un sistema robusto de inyección.",
+    "sections": [
+      { "id": 501, "title": "Arquitectura de Componentes y Standalone", "duration": "15 min", "completed": false },
+      { "id": 502, "title": "Programación Asíncrona Avanzada con RxJS", "duration": "28 min", "completed": false },
+      { "id": 503, "title": "Optimización del Change Detection Strategy", "duration": "20 min", "completed": false }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Vue.js 3 y el Composition API",
+    "lessonsCount": 22,
+    "quizzesCount": 3,
+    "durationHours": 12,
+    "category": "Frontend",
+    "description": "Desarrolla interfaces dinámicas ultraligeras utilizando las bondades de reactividad nativa y Pinia para estado global.",
+    "sections": [
+      { "id": 601, "title": "Introducción a Setup y Reactividad con Ref", "duration": "14 min", "completed": false },
+      { "id": 602, "title": "Gestión de Estado Centralizado con Pinia", "duration": "19 min", "completed": false },
+      { "id": 603, "title": "Renderizado del Lado del Servidor con Nuxt", "duration": "25 min", "completed": false }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Python y Desarrollo Web con Django",
+    "lessonsCount": 35,
+    "quizzesCount": 5,
+    "durationHours": 20,
+    "category": "Backend",
+    "description": "Aprende el framework de las baterías incluidas para crear plataformas web seguras, rápidas y con ORM integrado.",
+    "sections": [
+      { "id": 701, "title": "Patrón MVT y Configuración Inicial", "duration": "16 min", "completed": false },
+      { "id": 702, "title": "Consultas Avanzadas con el Django ORM", "duration": "24 min", "completed": false },
+      { "id": 703, "title": "Construcción de APIs con Django Rest Framework", "duration": "30 min", "completed": false }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "GraphQL, Apollo Server y Prácticas",
+    "lessonsCount": 18,
+    "quizzesCount": 2,
+    "durationHours": 9,
+    "category": "Backend",
+    "description": "Sustituye REST estructurando esquemas dinámicos eficientes, consultas y mutaciones optimizadas sin overfetching.",
+    "sections": [
+      { "id": 801, "title": "Definición de Schemas, Types y Resolvers", "duration": "22 min", "completed": false },
+      { "id": 802, "title": "Mutaciones y Conexión de Capas de Datos", "duration": "18 min", "completed": false },
+      { "id": 803, "title": "Estrategias de Caching y Dataloaders", "duration": "26 min", "completed": false }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "NestJS, Arquitectura y Decoradores",
+    "lessonsCount": 26,
+    "quizzesCount": 3,
+    "durationHours": 14,
+    "category": "Backend",
+    "description": "Produce código TypeScript empresarial altamente modular, mantenible y escalable bajo estándares del lado del servidor.",
+    "sections": [
+      { "id": 901, "title": "Estructura de Controladores y Módulos", "duration": "12 min", "completed": false },
+      { "id": 902, "title": "Uso de Guards para Control de Accesos", "duration": "15 min", "completed": false },
+      { "id": 903, "title": "Patrón Repository con TypeORM e Inyección", "duration": "22 min", "completed": false }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Java Spring Boot Microservices",
+    "lessonsCount": 40,
+    "quizzesCount": 5,
+    "durationHours": 25,
+    "category": "Backend",
+    "description": "Estructura sistemas de grado financiero y corporativo utilizando arquitecturas desacopladas y Spring Cloud.",
+    "sections": [
+      { "id": 1001, "title": "Inyección de Dependencias y Spring Data JPA", "duration": "20 min", "completed": false },
+      { "id": 1002, "title": "Configuración de un API Gateway y Eureka", "duration": "32 min", "completed": false },
+      { "id": 1003, "title": "Seguridad con JWT y Spring Security", "duration": "28 min", "completed": false }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "C# y Desarrollo Web con ASP.NET Core",
+    "lessonsCount": 28,
+    "quizzesCount": 4,
+    "durationHours": 15,
+    "category": "Backend",
+    "description": "Domina el desarrollo multiplataforma multiplataforma de APIs ultrarrápidas utilizando .NET Core y Entity Framework.",
+    "sections": [
+      { "id": 1101, "title": "Estructura del Proyecto y Middleware Pipeline", "duration": "14 min", "completed": false },
+      { "id": 1102, "title": "Migraciones y LINQ con Entity Framework", "duration": "22 min", "completed": false },
+      { "id": 1103, "title": "Inyección de dependencias y Patrón CQRS", "duration": "25 min", "completed": false }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "SQL Server Avanzado y Optimización",
+    "lessonsCount": 25,
+    "quizzesCount": 3,
+    "durationHours": 12,
+    "category": "Bases de Datos",
+    "description": "Mejora el rendimiento de bases de datos mediante índices estructurados, planes de ejecución y query tuning.",
+    "sections": [
+      { "id": 1201, "title": "Análisis de Índices Clustered y Non-Clustered", "duration": "18 min", "completed": false },
+      { "id": 1202, "title": "Lectura de Planes de Ejecución y Cuellos", "duration": "27 min", "completed": false },
+      { "id": 1203, "title": "Programación de Stored Procedures Complejos", "duration": "21 min", "completed": false }
+    ]
+  },
+  {
+    "id": 13,
+    "title": "PostgreSQL y Modelado Relacional",
+    "lessonsCount": 22,
+    "quizzesCount": 3,
+    "durationHours": 11,
+    "category": "Bases de Datos",
+    "description": "Diseña esquemas robustos aplicando restricciones de integridad, normalización avanzada y funciones PL/pgSQL.",
+    "sections": [
+      { "id": 1301, "title": "Principios de Normalización (1FN, 2FN, 3FN)", "duration": "15 min", "completed": false },
+      { "id": 1302, "title": "Disparadores (Triggers) y Funciones SQL", "duration": "19 min", "completed": false },
+      { "id": 1303, "title": "Manejo de Tipos de Datos JSONB Concurrentes", "duration": "22 min", "completed": false }
+    ]
+  },
+  {
+    "id": 14,
+    "title": "MongoDB y Arquitecturas NoSQL",
+    "lessonsCount": 20,
+    "quizzesCount": 2,
+    "durationHours": 9,
+    "category": "Bases de Datos",
+    "description": "Aprende el diseño de documentos sin esquema, agregaciones de datos complejas y escalabilidad horizontal con Sharding.",
+    "sections": [
+      { "id": 1401, "title": "Modelado por Embebido vs Referencia", "duration": "16 min", "completed": false },
+      { "id": 1402, "title": "Uso Avanzado del Aggregation Framework", "duration": "25 min", "completed": false },
+      { "id": 1403, "title": "Estrategias de Réplica Sets de Alta Disp.", "duration": "18 min", "completed": false }
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Go (Golang) y Sistemas Concurrentes",
+    "lessonsCount": 32,
+    "quizzesCount": 4,
+    "durationHours": 16,
+    "category": "Lenguajes",
+    "description": "Domina la sintaxis de Go, Goroutines y Channels para desarrollar software backend de alta concurrencia nativa.",
+    "sections": [
+      { "id": 1501, "title": "Tipos, Punteros y Estructuras Fundamentales", "duration": "11 min", "completed": false },
+      { "id": 1502, "title": "Concurrencia con Goroutines y WaitGroups", "duration": "24 min", "completed": false },
+      { "id": 1503, "title": "Comunicación Segura de Memoria con Channels", "duration": "20 min", "completed": false }
+    ]
+  },
+  {
+    "id": 16,
+    "title": "Rust, Seguridad de Memoria y API",
+    "lessonsCount": 30,
+    "quizzesCount": 4,
+    "durationHours": 18,
+    "category": "Lenguajes",
+    "description": "Descubre el lenguaje de sistemas moderno enfocado en velocidad y control absoluto sin necesidad de recolector de basura.",
+    "sections": [
+      { "id": 1601, "title": "El Sistema de Propiedad (Ownership) y Lifetimes", "duration": "26 min", "completed": false },
+      { "id": 1602, "title": "Manejo de Errores con Result y Option", "duration": "15 min", "completed": false },
+      { "id": 1603, "title": "Construcción de Servidores Web con Actix", "duration": "23 min", "completed": false }
+    ]
+  },
+  {
+    "id": 17,
+    "title": "Docker, Contenedores y Pipelines",
+    "lessonsCount": 24,
+    "quizzesCount": 3,
+    "durationHours": 10,
+    "category": "DevOps",
+    "description": "Aísla tus entornos de desarrollo de software creando imágenes eficientes y orquestando infraestructuras replicables.",
+    "sections": [
+      { "id": 1701, "title": "Comandos Esenciales e Imágenes desde Dockerfile", "duration": "13 min", "completed": false },
+      { "id": 1702, "title": "Manejo de Volúmenes y Redes Multicontenedor", "duration": "18 min", "completed": false },
+      { "id": 1703, "title": "Orquestación Local con Docker Compose", "duration": "17 min", "completed": false }
+    ]
+  },
+  {
+    "id": 18,
+    "title": "Kubernetes y Arquitecturas Cloud",
+    "lessonsCount": 28,
+    "quizzesCount": 3,
+    "durationHours": 14,
+    "category": "DevOps",
+    "description": "Despliega, escala y administra clústeres de contenedores en alta disponibilidad dentro de la nube computacional.",
+    "sections": [
+      { "id": 1801, "title": "Conceptos de Pods, Deployments y Services", "duration": "21 min", "completed": false },
+      { "id": 1802, "title": "Gestión de Archivos de Configuración YAML", "duration": "16 min", "completed": false },
+      { "id": 1803, "title": "Estrategias de Autoescalado y Rolling Updates", "duration": "25 min", "completed": false }
+    ]
+  },
+  {
+    "id": 19,
+    "title": "Git Avanzado y Estrategias Gitflow",
+    "lessonsCount": 15,
+    "quizzesCount": 2,
+    "durationHours": 6,
+    "category": "DevOps",
+    "description": "Optimiza la integración de software en equipos medianos y grandes dominando rebases, resolución de conflictos y ganchos.",
+    "sections": [
+      { "id": 1901, "title": "Diferencias Clínicas entre Merge y Rebase", "duration": "12 min", "completed": false },
+      { "id": 1902, "title": "Uso de Cherry-Pick y Reflog para Rescatar Código", "duration": "14 min", "completed": false },
+      { "id": 1903, "title": "Estrategias de Despliegue Continuo con Trunk-Based", "duration": "15 min", "completed": false }
+    ]
+  }
+]
