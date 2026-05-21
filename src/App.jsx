@@ -7,6 +7,7 @@ import { Sidebar } from './components/Sidebar';
 import { CourseList } from './components/CourseList';
 import { CourseContent } from './components/CourseContent';
 import { Profile } from './components/Profile';
+import { AdminDashboard } from './components/AdminDashboard';
 
 const MainApp = () => {
   const { theme, toggleTheme } = React.useContext(ThemeContext); 
@@ -17,6 +18,7 @@ const MainApp = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
+  const [courses, setCourses] = useState(initialCoursesData);
   
   // Estado para capturar qué curso con su estructura JSON interna fue clickeado
   const [selectedCourse, setSelectedCourse] = useState(null); 
@@ -36,16 +38,20 @@ const MainApp = () => {
       <Navbar setView={setView} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div style={{ display: 'flex' }}>
-        {!isContentView && (
+        {!isContentView && view !== 'admin' && (
           <Sidebar currentTab={sidebarTab} setCurrentTab={setSidebarTab} setView={setView} />
         )}
 
         <main style={{ flexGrow: 1, padding: '40px' }}>
           {view === 'profile' && <Profile setView={setView} />}
           
+          {view === 'admin' && (
+            <AdminDashboard courses={courses} setCourses={setCourses} setView={setView} />
+          )}
+          
           {view === 'courses' && (
             <CourseList 
-              courses={initialCoursesData}
+              courses={courses}
               searchTerm={searchTerm} 
               tabActive={sidebarTab} 
               favorites={favorites}
@@ -65,6 +71,25 @@ const MainApp = () => {
 
       <button onClick={toggleTheme} style={{ position: 'fixed', bottom: '25px', right: '25px', padding: '12px 20px', borderRadius: '30px', cursor: 'pointer', zIndex: 1000 }}>
         <span>{isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>
+      </button>
+
+      <button 
+        onClick={() => setView(view === 'admin' ? 'courses' : 'admin')} 
+        style={{ 
+          position: 'fixed', 
+          bottom: '25px', 
+          right: '200px', 
+          padding: '12px 20px', 
+          borderRadius: '30px', 
+          cursor: 'pointer', 
+          zIndex: 1000,
+          backgroundColor: view === 'admin' ? '#dc2626' : '#2563eb',
+          color: '#fff',
+          border: 'none',
+          fontWeight: '600'
+        }}
+      >
+        <span>{view === 'admin' ? '❌ Salir Admin' : '⚙️ Admin'}</span>
       </button>
     </div>
   );
