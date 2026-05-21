@@ -1,20 +1,23 @@
 import React, { useState, useContext, useCallback } from 'react';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
-import { AuthProvider, AuthContext } from './context/AuthContext';
-import initialCoursesData from './data/CoursesData.json';
+import { AuthProvider } from './context/AuthContext';
+import coursesData from './data/CoursesData.json';
+
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { CourseList } from './components/CourseList';
-import { CourseContent } from './components/CourseContent';
 import { Profile } from './components/Profile';
+import { CourseContent } from './components/CourseContent';
+import { Introduction } from './components/Introduction';
 import { AdminDashboard } from './components/AdminDashboard';
 
 const MainApp = () => {
-  const { theme, toggleTheme } = React.useContext(ThemeContext); 
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const isDark = theme === 'dark';
 
-  const [view, setView] = useState('courses'); 
-  const [sidebarTab, setSidebarTab] = useState('todos'); 
+  // Estados únicos
+  const [view, setView] = useState('courses'); // 'courses', 'profile', 'content', 'intro'
+  const [sidebarTab, setSidebarTab] = useState('todos');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
@@ -23,8 +26,12 @@ const MainApp = () => {
   // Estado para capturar qué curso con su estructura JSON interna fue clickeado
   const [selectedCourse, setSelectedCourse] = useState(null); 
 
-  const toggleFavorite = React.useCallback((courseId) => {
-    setFavorites(prev => prev.includes(courseId) ? prev.filter(id => id !== courseId) : [...prev, courseId]);
+  const loading = false;
+
+  const toggleFavorite = useCallback((courseId) => {
+    setFavorites(prev => 
+      prev.includes(courseId) ? prev.filter(id => id !== courseId) : [...prev, courseId]
+    );
     setCurrentPage(1);
   }, []);
 
@@ -32,8 +39,9 @@ const MainApp = () => {
 
   return (
     <div style={{ 
-      backgroundColor: isDark ? '#0f172a' : '#f9fafb', color: isDark ? '#f8fafc' : '#000000',
-      minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif', transition: 'all 0.3s ease'
+      backgroundColor: isDark ? '#0f172a' : '#f9fafb', 
+      color: isDark ? '#f8fafc' : '#000000',
+      minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif' 
     }}>
       <Navbar setView={setView} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
@@ -49,6 +57,10 @@ const MainApp = () => {
             <AdminDashboard courses={courses} setCourses={setCourses} setView={setView} />
           )}
           
+          {view === 'intro' && (
+            <Introduction course={selectedCourse} setView={setView} />
+          )}
+
           {view === 'courses' && (
             <CourseList 
               courses={courses}
@@ -70,7 +82,26 @@ const MainApp = () => {
       </div>
 
       <button onClick={toggleTheme} style={{ position: 'fixed', bottom: '25px', right: '25px', padding: '12px 20px', borderRadius: '30px', cursor: 'pointer', zIndex: 1000 }}>
-        <span>{isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>
+        {isDark ? 'Modo Claro' : 'Modo Oscuro'}
+      </button>
+
+      <button 
+        onClick={() => setView(view === 'admin' ? 'courses' : 'admin')} 
+        style={{ 
+          position: 'fixed', 
+          bottom: '25px', 
+          right: '200px', 
+          padding: '12px 20px', 
+          borderRadius: '30px', 
+          cursor: 'pointer', 
+          zIndex: 1000,
+          backgroundColor: view === 'admin' ? '#dc2626' : '#2563eb',
+          color: '#fff',
+          border: 'none',
+          fontWeight: '600'
+        }}
+      >
+        <span>{view === 'admin' ? '❌ Salir Admin' : '⚙️ Admin'}</span>
       </button>
 
       <button 

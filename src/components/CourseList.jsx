@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, useContext } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 import { Pagination } from './Pagination';
 
@@ -8,24 +8,19 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
 
   const ITEMS_PER_PAGE = 15;
 
-  // IA: Redundancia de renderizado por filtros múltiples -> Solución manual: useMemo unificado para tab + búsqueda
   const processedCourses = useMemo(() => {
     let result = [...courses];
 
-    // 1. Filtrar por Tab de la Barra Lateral
     if (tabActive === 'novedades') {
       result = result.filter(c => !favorites.includes(c.id) && c.id % 2 === 0);
-
     } else if (tabActive === 'mis-cursos') {
       result = result.filter(c => favorites.includes(c.id));
-
     } else if (tabActive === 'todos') {
       result = [...courses];
     }
 
-    // 2. Filtrar por término de búsqueda del Navbar
     if (searchTerm) {
-      result = result.filter(c => c.title.toLowerCase().trim().startsWith(searchTerm.toLowerCase().trim()));
+      result = result.filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()));
     }
 
     return result;
@@ -35,6 +30,7 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return processedCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [processedCourses, currentPage]);
+
   return (
     <div style={{ padding: '10px 0' }}>
       <h2 style={{ fontSize: '1.6rem', color: isDark ? '#f8fafc' : '#111827', margin: '0 0 20px 0', textTransform: 'capitalize' }}>
@@ -43,18 +39,13 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
       </h2>
 
       {paginatedCourses.length === 0 ? (
-        <p style={{ color: '#6b7280', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-          No se encontraron cursos que coincidan exactamente desde el inicio con el término buscado.
+        <p style={{ color: '#6b7280', backgroundColor: isDark ? '#1e293b' : '#fff', padding: '20px', borderRadius: '8px', border: `1px solid ${isDark ? '#334155' : '#e5e7eb'}` }}>
+          No se encontraron cursos.
         </p>
       ) : (
         <>
-          {/* DISEÑO EN MOSAICO */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '24px'
-          }}>
-            {paginatedCourses.map((course, idx) => {
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+            {paginatedCourses.map((course) => {
               const isFav = favorites.includes(course.id);
               const progress = course.progress || 0;
               const gradientBg = [
@@ -73,114 +64,64 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                   border: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`,
                   display: 'flex',
                   flexDirection: 'column',
-                  position: 'relative' // Para posicionar el corazón encima
+                  position: 'relative'
                 }}>
-
-                  {/* REQUERIMIENTO: Corazón encima de la tarjeta */}
                   <button
-                    onClick={() => toggleFavorite(course.id)}
+                    onClick={e => { e.stopPropagation(); toggleFavorite(course.id); }}
                     style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
+                      position: 'absolute', top: '12px', right: '12px',
                       backgroundColor: isDark ? '#334155' : '#ffffff',
-                      border: 'none',
-                      borderRadius: '50%',
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      fontSize: '1.2rem',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                      zIndex: 10,
-                      transition: 'transform 0.1s ease'
+                      border: 'none', borderRadius: '50%',
+                      width: '32px', height: '32px', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', fontSize: '1.2rem',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)', zIndex: 10
                     }}
-                    title={isFav ? "Quitar de mis cursos" : "Agregar a mis cursos"}
                   >
                     {isFav ? '❤️' : '🤍'}
                   </button>
 
                   <div style={{ height: '110px', background: gradientBg, width: '100%' }}></div>
               
-              <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 'bold', textTransform: 'uppercase' }}>{course.category}</span>
-                
-                <h3 style={{ fontSize: '1.1rem', margin: '6px 0 10px 0', color: isDark ? '#f1f5f9' : '#111827', fontWeight: '600' }}>
-                  {course.title}
-                </h3>
-                
-                <p style={{ fontSize: '0.88rem', color: isDark ? '#94a3b8' : '#6b7280', margin: '0 0 15px 0', lineHeight: '1.4', flexGrow: 1 }}>
-                  {course.description}
-                </p>
+                  <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 'bold', textTransform: 'uppercase' }}>{course.category}</span>
+                    
+                    <h3 style={{ fontSize: '1.1rem', margin: '6px 0 10px 0', color: isDark ? '#f1f5f9' : '#111827', fontWeight: '600' }}>
+                      {course.title}
+                    </h3>
+                    
+                    <p style={{ fontSize: '0.88rem', color: isDark ? '#94a3b8' : '#6b7280', margin: '0 0 15px 0', lineHeight: '1.4', flexGrow: 1 }}>
+                      {course.description}
+                    </p>
 
-                {/* AREA INTERACTIVA DE PROGRESO (DISEÑO SPLIT: CRONOLOGÍA Y BARRA CIRCULAR) */}
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  borderTop: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`, 
-                  paddingTop: '12px',
-                  marginBottom: '15px'
-                }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.82rem', color: isDark ? '#94a3b8' : '#6b7280' }}>
-                    <span>📖 {course.lessonsCount} Clases</span>
-                    <span>📊 {course.quizzesCount} Tests</span>
-                  </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`, paddingTop: '12px', marginBottom: '15px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.82rem', color: isDark ? '#94a3b8' : '#6b7280' }}>
+                        <span>📖 {course.lessonsCount} Clases</span>
+                        <span>📊 {course.quizzesCount} Tests</span>
+                      </div>
 
-                  {/* REQUERIMIENTO: BARRA DE PROGRESO CIRCULAR CON CSS CONIC-GRADIENT */}
-                  <div 
-                    style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: '50%',
-                      // El degradado cónico rellena proporcionalmente el porcentaje en azul (#2563eb)
-                      background: `conic-gradient(#2563eb ${progress * 3.6}deg, ${isDark ? '#334155' : '#e5e7eb'} 0deg)`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative'
-                    }}
-                    title={`Progreso: ${progress}%`}
-                  >
-                    {/* Círculo interno para crear el efecto de anillo (Donut Chart) */}
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: isDark ? '#1e293b' : '#ffffff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.72rem',
-                      fontWeight: '700',
-                      color: isDark ? '#f1f5f9' : '#1f2937'
-                    }}>
-                      {progress}%
+                      <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: `conic-gradient(#2563eb ${progress * 3.6}deg, ${isDark ? '#334155' : '#e5e7eb'} 0deg)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: isDark ? '#1e293b' : '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: '700', color: isDark ? '#f1f5f9' : '#1f2937' }}>
+                          {progress}%
+                        </div>
+                      </div>
                     </div>
+
+                    <button 
+                      onClick={() => {
+                        setSelectedCourse(course); 
+                        setView('intro'); // Asegúrate que sea 'intro' para que coincida con tu App.jsx
+                      }}
+                      style={{ width: '100%', padding: '10px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' }}
+                    >
+                      Ver Contenido 🚀
+                    </button>
                   </div>
                 </div>
-
-                <button 
-                  onClick={() => {
-                    setSelectedCourse(course); 
-                    setView('content');       
-                  }}
-                  style={{
-                    width: '100%', padding: '10px', backgroundColor: '#2563eb', color: '#fff',
-                    border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem'
-                  }}
-                >
-                  Ver Contenido 🚀
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <Pagination totalItems={processedCourses.length} currentPage={currentPage} onPageChange={setCurrentPage} />
+              );
+            })}
+          </div>
+          <Pagination totalItems={processedCourses.length} itemsPerPage={ITEMS_PER_PAGE} currentPage={currentPage} onPageChange={setCurrentPage} />
         </>
       )}
     </div>

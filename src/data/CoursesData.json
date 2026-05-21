@@ -1,4 +1,4 @@
-[
+ [
   {
     "id": 1,
     "title": "React y Arquitectura Front-End",
@@ -56,8 +56,8 @@
       { "id": 402, "title": "Configuración del archivo tailwind.config.js", "duration": "14 min", "completed": false },
       { "id": 403, "title": "Optimización de Estilos para el Modo Oscuro", "duration": "22 min", "completed": false }
     ]
-    },
-    {
+  },
+  {
     "id": 5,
     "title": "Angular e Inyección de Dependencias",
     "lessonsCount": 30,
