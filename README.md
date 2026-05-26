@@ -28,6 +28,14 @@ npm run lint
 
 ```
 
+## Credenciales
+**Administrador**: 
+  - user: admin
+  - password: 123456
+
+**Usuario General**:
+Ejecutar la opción de registrarse, luego copiar las credenciales que se generarán automaticamente e ingresar.
+
 ## Integrantes
 
 * Espíritu Diaz, Layne Guadalupe María Isabel
