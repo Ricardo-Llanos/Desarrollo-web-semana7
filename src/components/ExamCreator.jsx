@@ -7,11 +7,31 @@ export const ExamCreator = ({ courseId, courseTitle, onBack }) => {
 
     const localStorageKey = `exam_course_${courseId}`;
 
+    const [passingScore, setPassingScore] = useState(() => {
+        const savedExam = localStorage.getItem(localStorageKey);
+        if (savedExam) {
+            try {
+                const parsed = JSON.parse(savedExam);
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    return parsed.passingScore ?? 70;
+                }
+            } catch (e) {
+                console.error("Error loading passingScore from localStorage", e);
+            }
+        }
+        return 70; // Default passing score
+    });
+
     const [questions, setQuestions] = useState(() => {
         const savedExam = localStorage.getItem(localStorageKey);
         if (savedExam) {
             try {
-                return JSON.parse(savedExam);
+                const parsed = JSON.parse(savedExam);
+                if (Array.isArray(parsed)) {
+                    return parsed;
+                } else if (parsed && typeof parsed === 'object') {
+                    return parsed.questions || [];
+                }
             } catch (e) {
                 console.error("Error al parsear el examen de localStorage", e);
             }
@@ -133,8 +153,19 @@ export const ExamCreator = ({ courseId, courseTitle, onBack }) => {
     // 8. Guardar todo el examen en persistencia
     const handleSaveExam = () => {
         try {
-            localStorage.setItem(localStorageKey, JSON.stringify(questions));
-            console.log("Estructura final del Examen a guardar:", questions);
+            const questionsWithMeta = questions.map(q => {
+                const correctCount = q.options.filter(opt => opt.isCorrect).length;
+                return {
+                    ...q,
+                    multiplyOptions: correctCount > 1
+                };
+            });
+            const dataToSave = {
+                questions: questionsWithMeta,
+                passingScore: passingScore
+            };
+            localStorage.setItem(localStorageKey, JSON.stringify(dataToSave));
+            console.log("Estructura final del Examen a guardar:", dataToSave);
             alert('Examen de certificación guardado localmente con éxito.');
         } catch (e) {
             console.error("Error al guardar el examen en localStorage", e);
@@ -176,6 +207,58 @@ export const ExamCreator = ({ courseId, courseTitle, onBack }) => {
                     >
                         Guardar Examen
                     </button>
+                </div>
+            </div>
+
+            {/* Configuración de Examen */}
+            <div style={{
+                backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '25px',
+                border: `1px solid ${isDark ? '#334155' : '#e5e7eb'}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '20px',
+                flexWrap: 'wrap',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <span style={{ fontSize: '1.8rem' }}>🎯</span>
+                    <div>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: isDark ? '#f8fafc' : '#111827', fontWeight: '600' }}>
+                            Porcentaje mínimo para aprobar
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: isDark ? '#94a3b8' : '#6b7280' }}>
+                            Define el porcentaje de aciertos mínimos que el alumno necesita para certificarse en este curso.
+                        </p>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input 
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={passingScore}
+                        onChange={(e) => {
+                            const val = Math.max(1, Math.min(100, Number(e.target.value)));
+                            setPassingScore(val);
+                        }}
+                        style={{
+                            width: '80px',
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            border: `1px solid ${isDark ? '#475569' : '#cbd5e1'}`,
+                            backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                            color: isDark ? '#f1f5f9' : '#111827',
+                            fontSize: '1rem',
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            outline: 'none'
+                        }}
+                    />
+                    <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: isDark ? '#cbd5e1' : '#4b5563' }}>%</span>
                 </div>
             </div>
 

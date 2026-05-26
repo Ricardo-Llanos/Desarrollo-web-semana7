@@ -84,8 +84,31 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                   <div style={{ height: '110px', background: gradientBg, width: '100%' }}></div>
 
                   <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 'bold', textTransform: 'uppercase' }}>{course.category}</span>
+                    {/* Fila superior de Tags/Categoría */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
 
+                      <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 'bold', textTransform: 'uppercase' }}>{course.category}</span>
+
+                      {/* ETIQUETA NUEVA: Indicador de certificación */}
+                      <span style={{
+                        fontSize: '0.68rem',
+                        fontWeight: '700',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        letterSpacing: '0.02em',
+                        backgroundColor: course.hasCertificationExam
+                          ? (isDark ? 'rgba(35, 134, 54, 0.2)' : '#d1fae5')
+                          : (isDark ? 'rgba(71, 85, 105, 0.4)' : '#f3f4f6'),
+                        color: course.hasCertificationExam
+                          ? (isDark ? '#4ade80' : '#065f46')
+                          : (isDark ? '#94a3b8' : '#6b7280'),
+                        border: course.hasCertificationExam
+                          ? `1px solid ${isDark ? 'rgba(52, 211, 153, 0.2)' : '#a7f3d0'}`
+                          : `1px solid ${isDark ? 'rgba(148, 163, 184, 0.1)' : '#e5e7eb'}`,
+                      }}>
+                        {course.hasCertificationExam ? 'Certificación Oficial' : ''}
+                      </span>
+                    </div>
                     <h3 style={{ fontSize: '1.1rem', margin: '6px 0 10px 0', color: isDark ? '#f1f5f9' : '#111827', fontWeight: '600' }}>
                       {course.title}
                     </h3>
