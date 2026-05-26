@@ -9,6 +9,8 @@ import { CourseContent } from './components/CourseContent';
 import { Profile } from './components/Profile';
 import { Introduction } from './components/Introduction';
 import { AdminDashboard } from './components/AdminDashboard';
+import { ExamCreator } from './components/ExamCreator';
+import { TakeExam } from './components/TakeExam';
 
 const MainApp = () => {
   const { theme, toggleTheme } = useContext(ThemeContext); 
@@ -19,8 +21,24 @@ const MainApp = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
-  const [courses, setCourses] = useState(initialCoursesData);
+  const [courses, setCourses] = useState(() => {
+    const saved = localStorage.getItem('courses');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.error("Error loading courses from localStorage", e);
+      }
+    }
+    return initialCoursesData;
+  });
   const [selectedCourse, setSelectedCourse] = useState(null);
+
+  const [activeExamData, setActiveExamData] = useState({
+    courseId: null,
+    courseTitle: ''
+  });
 
   const toggleFavorite = useCallback((courseId) => {
     setFavorites(prev => prev.includes(courseId) ? prev.filter(id => id !== courseId) : [...prev, courseId]);
@@ -28,7 +46,9 @@ const MainApp = () => {
   }, []);
 
   const isContentView = view === 'content';
-
+  const isExamEditor = typeof view === 'object' && view?.name === 'EXAM_EDITOR';
+  const isAdminView = view === 'admin' || isExamEditor;
+  
   return (
     <div style={{ 
       backgroundColor: isDark ? '#0f172a' : '#f9fafb', color: isDark ? '#f8fafc' : '#000000',
@@ -37,17 +57,39 @@ const MainApp = () => {
       <Navbar setView={setView} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div style={{ display: 'flex' }}>
-        {!isContentView && view !== 'admin' && (
+        {!isContentView && !isAdminView && (
           <Sidebar currentTab={sidebarTab} setCurrentTab={setSidebarTab} setView={setView} />
         )}
 
         <main style={{ flexGrow: 1, padding: '40px' }}>
           {view === 'profile' && <Profile setView={setView} />}
           
-          {view === 'admin' && (
+          {isExamEditor ? (
+            <ExamCreator 
+              courseId={view.courseId}
+              courseTitle={view.courseTitle}
+              onBack={() => setView('admin')}
+            />
+          ) : view === 'admin' ? (
             <AdminDashboard courses={courses} setCourses={setCourses} setView={setView} />
-          )}
+          ) : null}
           
+          {/* {view === 'admin' && (
+            activeExamData.courseId ? (
+              <ExamCreator 
+                courseId={activeExamData.courseId}
+                courseTitle={activeExamData.courseTitle}
+                onBack={() => setActiveExamData({ courseId: null, courseTitle: '' })}
+              />
+            ) : (
+              <AdminDashboard 
+                setView={setView} 
+                // Enviamos una función puente en lugar de setView directo para capturar el salto al examen
+                setExamView={(id, title) => setActiveExamData({ courseId: id, courseTitle: title })}
+              />
+            )
+          )} */}
+
           {view === 'courses' && (
             <CourseList 
               courses={courses}
@@ -69,6 +111,14 @@ const MainApp = () => {
           {view === 'content' && selectedCourse && (
             <CourseContent course={selectedCourse} setView={setView} />
           )}
+
+          {/* Debajo del condicional de view === 'content' de tu archivo original */}
+          {view === 'take-exam' && selectedCourse && (
+            <TakeExam 
+              course={selectedCourse} 
+              setView={setView} 
+            />
+          )}
         </main>
       </div>
 
@@ -77,7 +127,7 @@ const MainApp = () => {
       </button>
 
       <button 
-        onClick={() => setView(view === 'admin' ? 'courses' : 'admin')} 
+        onClick={() => setView(isAdminView ? 'courses' : 'admin')} 
         style={{ 
           position: 'fixed', 
           bottom: '25px', 
@@ -86,13 +136,13 @@ const MainApp = () => {
           borderRadius: '30px', 
           cursor: 'pointer', 
           zIndex: 1000,
-          backgroundColor: view === 'admin' ? '#dc2626' : '#2563eb',
+          backgroundColor: isAdminView ? '#dc2626' : '#2563eb',
           color: '#fff',
           border: 'none',
           fontWeight: '600'
         }}
       >
-        <span>{view === 'admin' ? 'Salir Admin' : 'Admin'}</span>
+        <span>{isAdminView ? 'Salir Admin' : 'Admin'}</span>
       </button>
     </div>
   );

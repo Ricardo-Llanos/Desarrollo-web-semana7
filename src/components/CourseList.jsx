@@ -82,14 +82,14 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                   </button>
 
                   <div style={{ height: '110px', background: gradientBg, width: '100%' }}></div>
-              
+
                   <div style={{ padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 'bold', textTransform: 'uppercase' }}>{course.category}</span>
-                    
+
                     <h3 style={{ fontSize: '1.1rem', margin: '6px 0 10px 0', color: isDark ? '#f1f5f9' : '#111827', fontWeight: '600' }}>
                       {course.title}
                     </h3>
-                    
+
                     <p style={{ fontSize: '0.88rem', color: isDark ? '#94a3b8' : '#6b7280', margin: '0 0 15px 0', lineHeight: '1.4', flexGrow: 1 }}>
                       {course.description}
                     </p>
@@ -107,9 +107,9 @@ export const CourseList = ({ courses, searchTerm, tabActive, favorites, toggleFa
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => {
-                        setSelectedCourse(course); 
+                        setSelectedCourse(course);
                         setView('intro');
                       }}
                       style={{ width: '100%', padding: '10px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' }}

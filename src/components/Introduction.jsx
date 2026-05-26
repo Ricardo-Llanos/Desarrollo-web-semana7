@@ -7,7 +7,7 @@ export const Introduction = ({ course, setView }) => {
 
   const card = isDark ? '#1e293b' : '#ffffff';
   const text = isDark ? '#f1f5f9' : '#111827';
-  const sub  = isDark ? '#94a3b8' : '#6b7280';
+  const sub = isDark ? '#94a3b8' : '#6b7280';
   const border = isDark ? '#334155' : '#e5e7eb';
 
   if (!course) return null;
@@ -22,7 +22,7 @@ export const Introduction = ({ course, setView }) => {
 
   const outcomes = [
     { icon: '🚀', text: `Dominarás "${course.title}" con confianza para aplicarlo en proyectos reales` },
-    { icon: '🧩', text: `Completarás ${course.quizzesCount} evaluaciones y ejercicios prácticos` },
+    { icon: '📝', text: `Completarás ${course.quizzesCount} evaluaciones y ejercicios prácticos` },
     { icon: '💼', text: 'Contarás con un proyecto finalizado para tu portafolio profesional' },
   ];
 
@@ -52,7 +52,7 @@ export const Introduction = ({ course, setView }) => {
           backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '50%'
         }} />
         <p style={{ fontSize: '0.78rem', fontWeight: '700', letterSpacing: '0.12em', opacity: 0.8, marginBottom: '10px' }}>
-          {course.category.toUpperCase()} · CURSO #{course.id}
+          {course.category?.toUpperCase()} · CURSO #{course.id}
         </p>
         <h1 style={{ fontSize: '1.9rem', fontWeight: '800', marginBottom: '16px', lineHeight: 1.2 }}>
           {course.title}
@@ -62,16 +62,17 @@ export const Introduction = ({ course, setView }) => {
         </p>
         <div style={{ display: 'flex', gap: '14px', marginTop: '28px', flexWrap: 'wrap' }}>
           {[
-            ['⏱️', `${course.durationHours}h de contenido`],
+            ['🕒', `${course.durationHours}h de contenido`],
             ['📖', `${course.lessonsCount} lecciones`],
-            ['📝', `${course.quizzesCount} quizzes`],
-            ['📂', `${course.sections.length} secciones`],
+            ['🧠', `${course.quizzesCount} quizzes`],
+            ['🗂️', `${course.sections?.length || 0} secciones`],
           ].map(([icon, label]) => (
             <div key={label} style={{
               backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: '8px',
               padding: '8px 16px', fontSize: '0.82rem', fontWeight: '600',
+              display: 'flex', alignItems: 'center', gap: '6px'
             }}>
-              {icon} {label}
+              <span>{icon}</span> {label}
             </div>
           ))}
         </div>
@@ -87,7 +88,7 @@ export const Introduction = ({ course, setView }) => {
       <div style={{ backgroundColor: card, borderRadius: '12px', padding: '32px', marginBottom: '24px', border: `1px solid ${border}` }}>
         <h2 style={{ fontSize: '1.2rem', fontWeight: '700', color: text, marginBottom: '20px' }}>📚 Contenido del curso</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {course.sections.map((section, i) => (
+          {course.sections?.map((section, i) => (
             <div key={section.id} style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               padding: '14px 18px', borderRadius: '10px',
@@ -130,22 +131,61 @@ export const Introduction = ({ course, setView }) => {
         </div>
       </div>
 
-      {/* Botón ir al contenido */}
-      <div style={{ textAlign: 'center' }}>
+      {/* CONTENEDOR DE ACCIONES (Botones inferiores de navegación) */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '20px',
+        flexWrap: 'wrap'
+      }}>
+        {/* Botón tradicional: Ir al contenido */}
         <button
           onClick={() => setView('content')}
           style={{
-            backgroundColor: '#2563eb', color: '#ffffff', border: 'none',
-            borderRadius: '12px', padding: '16px 48px',
-            fontSize: '1rem', fontWeight: '700', cursor: 'pointer',
+            backgroundColor: '#2563eb',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '16px 36px',
+            fontSize: '1rem',
+            fontWeight: '700',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px -1px rgba(37, 99, 235, 0.2)',
+            transition: 'background-color 0.2s'
           }}
           onMouseEnter={e => e.currentTarget.style.backgroundColor = '#1d4ed8'}
           onMouseLeave={e => e.currentTarget.style.backgroundColor = '#2563eb'}
         >
           Ir al contenido del curso
         </button>
-      </div>
 
+        {/* NUEVO BOTÓN: Dar examen (Se renderiza condicionalmente si el curso incluye certificación) */}
+        {course.hasCertificationExam && (
+          <button
+            onClick={() => setView('take-exam')}
+            style={{
+              backgroundColor: '#238636',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '16px 36px',
+              fontSize: '1rem',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 6px -1px rgba(35, 134, 54, 0.2)',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = '#1e6f2f'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = '#238636'}
+          >
+            🎓 Dar Examen de Certificación
+          </button>
+        )}
+      </div>
     </div>
   );
 };

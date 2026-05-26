@@ -11,6 +11,10 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const titleInputRef = useRef(null);
+
+    // Estado para controlar qué curso tiene la fila expandida (Guarda el ID del curso)
+    const [expandedCourseId, setExpandedCourseId] = useState(null);
+
     const [formData, setFormData] = useState({
         title: '',
         category: '',
@@ -18,8 +22,31 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
         lessonsCount: '',
         quizzesCount: '',
         durationHours: '',
+        hasCertificationExam: false,
         sections: []
     });
+
+    // Cargar cursos desde localStorage al montar el componente
+    useEffect(() => {
+        const savedCourses = localStorage.getItem('courses');
+        if (savedCourses) {
+            try {
+                const parsed = JSON.parse(savedCourses);
+                if (parsed && parsed.length > 0) {
+                    setCourses(parsed);
+                }
+            } catch (e) {
+                console.error("Error al cargar cursos de localStorage", e);
+            }
+        }
+    }, [setCourses]);
+
+    // Guardar cursos en localStorage cuando cambie el estado
+    useEffect(() => {
+        if (courses && courses.length > 0) {
+            localStorage.setItem('courses', JSON.stringify(courses));
+        }
+    }, [courses]);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -79,6 +106,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
             lessonsCount: '',
             quizzesCount: '',
             durationHours: '',
+            hasCertificationExam: false,
             sections: []
         });
         setIsModalOpen(true);
@@ -94,6 +122,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
             lessonsCount: course.lessonsCount,
             quizzesCount: course.quizzesCount,
             durationHours: course.durationHours,
+            hasCertificationExam: course.hasCertificationExam || false,
             sections: course.sections || []
         });
         setIsModalOpen(true);
@@ -129,6 +158,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                         lessonsCount: parseInt(formData.lessonsCount) || 0,
                         quizzesCount: parseInt(formData.quizzesCount) || 0,
                         durationHours: parseInt(formData.durationHours) || 0,
+                        hasCertificationExam: formData.hasCertificationExam,
                         sections: formData.sections
                     }
                     : c
@@ -143,6 +173,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                 lessonsCount: parseInt(formData.lessonsCount) || 0,
                 quizzesCount: parseInt(formData.quizzesCount) || 0,
                 durationHours: parseInt(formData.durationHours) || 0,
+                hasCertificationExam: formData.hasCertificationExam, // Guardar nuevo
                 sections: formData.sections || [
                     {
                         id: 1,
@@ -163,8 +194,23 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
     const handleDeleteCourse = (id) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este curso?')) {
             setCourses(courses.filter(c => c.id !== id));
+            if (expandedCourseId === id) setExpandedCourseId(null); // Limpiar expansor si se elimina
             alert('Curso eliminado exitosamente');
         }
+    };
+
+    // Función para alternar el despliegue de la fila del examen
+    const toggleExpandRow = (courseId) => {
+        setExpandedCourseId(prev => prev === courseId ? null : courseId);
+    };
+
+    // Función manejadora para cuando deciden editar el examen específico
+    const handleEditExam = (courseId, courseTitle) => {
+        setView({
+            name: 'EXAM_EDITOR',
+            courseId: courseId,
+            courseTitle: courseTitle
+        });
     };
 
     return (
@@ -254,7 +300,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                         fontWeight: '600',
                                         color: isDark ? '#cbd5e1' : '#374151',
                                         borderBottom: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`
-                                    }}>Lecciones</th>
+                                    }}>Tests</th>
                                     <th style={{
                                         padding: '16px',
                                         textAlign: 'center',
@@ -262,7 +308,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                         fontWeight: '600',
                                         color: isDark ? '#cbd5e1' : '#374151',
                                         borderBottom: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`
-                                    }}>Tests</th>
+                                    }}>Lecciones</th>
                                     <th style={{
                                         padding: '16px',
                                         textAlign: 'center',
@@ -282,117 +328,134 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {courses.map((course, idx) => (
-                                    <tr
-                                        key={course.id}
-                                        style={{
-                                            backgroundColor: idx % 2 === 0 ? 'transparent' : isDark ? '#334155' : '#f9fafb',
-                                            borderBottom: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`
-                                        }}
-                                    >
-                                        <td style={{
-                                            padding: '16px',
-                                            fontSize: '0.88rem',
-                                            color: isDark ? '#cbd5e1' : '#374151'
-                                        }}>
-                                            <span style={{
-                                                backgroundColor: '#2563eb',
-                                                color: '#fff',
-                                                padding: '4px 8px',
-                                                borderRadius: '4px',
-                                                fontWeight: '600',
-                                                fontSize: '0.75rem'
+                                {courses.map((course, idx) => {
+                                    const isExpanded = expandedCourseId === course.id;
+                                    return (
+                                        <React.Fragment key={course.id}>
+                                            {/* Fila Principal */}
+                                            <tr style={{
+                                                backgroundColor: idx % 2 === 0 ? 'transparent' : isDark ? '#243146' : '#f9fafb',
+                                                borderBottom: `1px solid ${isDark ? '#334155' : '#f3f4f6'}`
                                             }}>
-                                                #{course.id}
-                                            </span>
-                                        </td>
-                                        <td style={{
-                                            padding: '16px',
-                                            fontSize: '0.88rem',
-                                            color: isDark ? '#f1f5f9' : '#111827',
-                                            fontWeight: '500'
-                                        }}>
-                                            {course.title}
-                                        </td>
-                                        <td style={{
-                                            padding: '16px',
-                                            fontSize: '0.88rem',
-                                            color: isDark ? '#cbd5e1' : '#374151'
-                                        }}>
-                                            <span style={{
-                                                backgroundColor: course.category === 'Frontend' ? '#dbeafe' : course.category === 'Backend' ? '#fef3c7' : '#d1fae5',
-                                                color: course.category === 'Frontend' ? '#1e40af' : course.category === 'Backend' ? '#92400e' : '#065f46',
-                                                padding: '4px 12px',
-                                                borderRadius: '12px',
-                                                fontSize: '0.75rem',
-                                                fontWeight: '600'
-                                            }}>
-                                                {course.category}
-                                            </span>
-                                        </td>
-                                        <td style={{
-                                            padding: '16px',
-                                            textAlign: 'center',
-                                            fontSize: '0.88rem',
-                                            color: isDark ? '#cbd5e1' : '#374151'
-                                        }}>
-                                            {course.lessonsCount}
-                                        </td>
-                                        <td style={{
-                                            padding: '16px',
-                                            textAlign: 'center',
-                                            fontSize: '0.88rem',
-                                            color: isDark ? '#cbd5e1' : '#374151'
-                                        }}>
-                                            {course.quizzesCount}
-                                        </td>
-                                        <td style={{
-                                            padding: '16px',
-                                            textAlign: 'center',
-                                            fontSize: '0.88rem',
-                                            color: isDark ? '#cbd5e1' : '#374151'
-                                        }}>
-                                            {course.durationHours}h
-                                        </td>
-                                        <td style={{
-                                            padding: '16px',
-                                            textAlign: 'center'
-                                        }}>
-                                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                                                <button
-                                                    onClick={() => handleEditCourse(course)}
-                                                    style={{
-                                                        padding: '6px 12px',
-                                                        backgroundColor: '#2563eb',
-                                                        color: '#fff',
-                                                        border: 'none',
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
+                                                <td style={{ padding: '16px', fontSize: '0.88rem', color: isDark ? '#cbd5e1' : '#374151' }}>
+                                                    <span style={{ backgroundColor: '#2563eb', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontWeight: '600', fontSize: '0.75rem' }}>
+                                                        #{course.id}
+                                                    </span>
+                                                </td>
+                                                <td style={{ padding: '16px', fontSize: '0.88rem', color: isDark ? '#f1f5f9' : '#111827', fontWeight: '500' }}>
+                                                    {course.title}
+                                                </td>
+                                                <td style={{ padding: '16px', fontSize: '0.88rem', color: isDark ? '#cbd5e1' : '#374151' }}>
+                                                    <span style={{
+                                                        backgroundColor: course.category === 'Frontend' ? '#dbeafe' : course.category === 'Backend' ? '#fef3c7' : '#d1fae5',
+                                                        color: course.category === 'Frontend' ? '#1e40af' : course.category === 'Backend' ? '#92400e' : '#065f46',
+                                                        padding: '4px 12px',
+                                                        borderRadius: '12px',
                                                         fontSize: '0.75rem',
                                                         fontWeight: '600'
-                                                    }}
-                                                >
-                                                    Editar
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteCourse(course.id)}
-                                                    style={{
-                                                        padding: '6px 12px',
-                                                        backgroundColor: '#dc2626',
-                                                        color: '#fff',
-                                                        border: 'none',
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: '600'
-                                                    }}
-                                                >
-                                                    Eliminar
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    }}>
+                                                        {course.category}
+                                                    </span>
+                                                </td>
+                                                {/* Columna indicadora de Certificación con disparador de dropdown si aplica */}
+                                                <td style={{ padding: '16px', textAlign: 'center' }}>
+                                                    {course.hasCertificationExam ? (
+                                                        <button
+                                                            onClick={() => toggleExpandRow(course.id)}
+                                                            style={{
+                                                                backgroundColor: isExpanded ? '#238636' : isDark ? '#334155' : '#e2e8f0',
+                                                                color: isExpanded ? '#fff' : isDark ? '#cbd5e1' : '#334155',
+                                                                border: 'none',
+                                                                padding: '6px 12px',
+                                                                borderRadius: '20px',
+                                                                cursor: 'pointer',
+                                                                fontSize: '0.75rem',
+                                                                fontWeight: '600',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '6px'
+                                                            }}
+                                                        >
+                                                            Tiene Examen {isExpanded ? '▲' : '▼'}
+                                                        </button>
+                                                    ) : (
+                                                        <span style={{ color: isDark ? '#64748b' : '#94a3b8', fontSize: '0.85rem' }}>No contiene</span>
+                                                    )}
+                                                </td>
+                                                <td style={{ padding: '16px', textAlign: 'center', fontSize: '0.88rem', color: isDark ? '#cbd5e1' : '#374151' }}>
+                                                    {course.lessonsCount} lecc.
+                                                </td>
+                                                <td style={{ padding: '16px', textAlign: 'center', fontSize: '0.88rem', color: isDark ? '#cbd5e1' : '#374151' }}>
+                                                    {course.durationHours}h
+                                                </td>
+                                                <td style={{ padding: '16px', textAlign: 'center' }}>
+                                                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                                        <button
+                                                            onClick={() => handleEditCourse(course)}
+                                                            style={{ padding: '6px 12px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600' }}
+                                                        >
+                                                            Editar
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteCourse(course.id)}
+                                                            style={{ padding: '6px 12px', backgroundColor: '#dc2626', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600' }}
+                                                        >
+                                                            Eliminar
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            {/* Fila Expandible Condicional (Sub-módulo del examen) */}
+                                            {course.hasCertificationExam && isExpanded && (
+                                                <tr style={{ backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
+                                                    <td colSpan="7" style={{ padding: '20px 30px', borderBottom: `1px solid ${isDark ? '#334155' : '#e5e7eb'}` }}>
+                                                        <div style={{
+                                                            display: 'flex',
+                                                            justifyContent: 'space-between',
+                                                            alignItems: 'center',
+                                                            backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                                                            padding: '16px 24px',
+                                                            borderRadius: '8px',
+                                                            borderLeft: '4px solid #238636',
+                                                            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                                                        }}>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                                                <span style={{ fontSize: '1.5rem' }}>🎓</span>
+                                                                <div>
+                                                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '0.95rem', color: isDark ? '#f8fafc' : '#111827', fontWeight: '600' }}>
+                                                                        Examen de Certificación Oficial
+                                                                    </h4>
+                                                                    <p style={{ margin: 0, fontSize: '0.85rem', color: isDark ? '#94a3b8' : '#6b7280' }}>
+                                                                        Requisito indispensable para que el alumno obtenga el diploma del curso.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <button
+                                                                onClick={() => handleEditExam(course.id, course.title)}
+                                                                style={{
+                                                                    padding: '8px 16px',
+                                                                    backgroundColor: 'transparent',
+                                                                    color: '#238636',
+                                                                    border: '2px solid #238636',
+                                                                    borderRadius: '6px',
+                                                                    cursor: 'pointer',
+                                                                    fontSize: '0.8rem',
+                                                                    fontWeight: '700',
+                                                                    transition: 'all 0.2s',
+                                                                }}
+                                                                onMouseOver={(e) => { e.target.style.backgroundColor = '#238636'; e.target.style.color = '#fff'; }}
+                                                                onMouseOut={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#238636'; }}
+                                                            >
+                                                                ⚙ Editar Preguntas del Examen
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
@@ -433,6 +496,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                         </h2>
 
                         <form onSubmit={handleSaveCourse}>
+                            {/* Input Título */}
                             <div style={{ marginBottom: '16px' }}>
                                 <label style={{
                                     display: 'block',
@@ -462,6 +526,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                 />
                             </div>
 
+                            {/* Input Categoría */}
                             <div style={{ marginBottom: '16px' }}>
                                 <label style={{
                                     display: 'block',
@@ -496,6 +561,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                 </select>
                             </div>
 
+                            {/* Textarea Descripción */}
                             <div style={{ marginBottom: '16px' }}>
                                 <label style={{
                                     display: 'block',
@@ -527,6 +593,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                 />
                             </div>
 
+                            {/* Métricas Numéricas */}
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                                 <div>
                                     <label style={{
@@ -558,6 +625,7 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                     />
                                 </div>
 
+                                {/* Botones Acciones del Modal */}
                                 <div>
                                     <label style={{
                                         display: 'block',
@@ -619,6 +687,32 @@ export const AdminDashboard = ({ courses, setCourses, setView }) => {
                                 </div>
                             </div>
 
+                            {/* NUEVO INPUT: Checkbox de Examen de Certificación */}
+                            <div style={{
+                                marginBottom: '20px',
+                                padding: '12px',
+                                borderRadius: '8px',
+                                backgroundColor: isDark ? '#0f172a' : '#f8fafc',
+                                border: `1px dashed ${formData.hasCertificationExam ? '#238636' : isDark ? '#475569' : '#d1d5db'}`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                cursor: 'pointer'
+                            }}>
+                                <input
+                                    type="checkbox"
+                                    id="hasCertificationExam"
+                                    name="hasCertificationExam"
+                                    checked={formData.hasCertificationExam}
+                                    onChange={handleInputChange}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                                />
+                                <label htmlFor="hasCertificationExam" style={{ fontSize: '0.9rem', fontWeight: '600', color: formData.hasCertificationExam ? (isDark ? '#4ade80' : '#16a34a') : (isDark ? '#cbd5e1' : '#374151'), cursor: 'pointer', userSelect: 'none' }}>
+                                    ¿Contiene examen de certificación oficial?
+                                </label>
+                            </div>
+
+                            {/* Botones Acciones del Modal */}
                             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                                 <button
                                     type="button"
